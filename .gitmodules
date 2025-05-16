@@ -1,0 +1,3 @@
+[submodule "linux"]
+	path = linux
+	url = https://github.com/msm8974-mainline/linux
