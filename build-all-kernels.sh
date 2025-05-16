@@ -56,7 +56,7 @@ for BRANCH in "${BRANCHES[@]}"; do
     echo "🚧 Building kernel .deb packages for $KERNEL_NAME"
     make -j$(nproc) \
          LOCALVERSION=-citronics-lemon \
-         KDEB_PKGVERSION=1.0-1 \
+         KDEB_PKGVERSION="$PKG_VERSION" \
          deb-pkg
 
     # Move output
