@@ -1,14 +1,15 @@
 #!/bin/bash
 set -e
 
-KERNEL_SRC_DIR="./linux"
-BRANCHES=("qcom-msm8974-6.11.y")
+BRANCHES=("qcom-msm8974-6.12.y")
 ARCH="arm"
 CROSS_COMPILE="arm-linux-gnueabihf-"
 PKG_VERSION="1.0-1"
 CONFIG_LOCALVERSION="-citronics-lemon"
 
 ROOT_DIR=$(pwd)
+
+KERNEL_SRC_DIR="${ROOT_DIR}/linux"
 
 cd "$KERNEL_SRC_DIR"
 git fetch --all
@@ -48,20 +49,19 @@ for BRANCH in "${BRANCHES[@]}"; do
     export ARCH="$ARCH"
     export CROSS_COMPILE="$CROSS_COMPILE"
 
-    # Apply config
+    # Copy config and build
     cp "$CONFIG_FILE" .config
     make olddefconfig
 
-    # Build the deb packages
     echo "🚧 Building kernel .deb packages for $KERNEL_NAME"
     make -j$(nproc) \
-         LOCALVERSION="$CONFIG_LOCALVERSION" \
-         KDEB_PKGVERSION="$PKG_VERSION" \
+         LOCALVERSION=$CONFIG_LOCALVERSION \
+         KDEB_PKGVERSION=$PKG_VERSION \
          deb-pkg
 
-    # Move output
+    # Move packages to output
     mkdir -p "$OUTPUT_DIR"
-    cd "$BUILD_DIR/.."  # Go to the parent of build dir where .debs are created
+    cd "$BUILD_DIR/.."
     mv ./*.deb "$OUTPUT_DIR"
 
     echo "✅ Done: $OUTPUT_DIR"
